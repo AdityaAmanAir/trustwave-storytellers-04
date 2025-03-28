@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -47,14 +46,24 @@ const Record = () => {
 
   const startCamera = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      stopMediaTracks();
+      
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        video: { width: 1280, height: 720 }, 
+        audio: true 
+      });
+      
       streamRef.current = stream;
       
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        videoRef.current.muted = true;
+        videoRef.current.play().catch(err => console.error("Error playing video:", err));
       }
       
-      mediaRecorderRef.current = new MediaRecorder(stream);
+      mediaRecorderRef.current = new MediaRecorder(stream, {
+        mimeType: 'video/webm;codecs=vp9,opus'
+      });
       
       mediaRecorderRef.current.ondataavailable = (event) => {
         if (event.data && event.data.size > 0) {
@@ -106,7 +115,6 @@ const Record = () => {
       setRecordingTime(prev => prev + 1);
     }, 1000);
     
-    // Simulate emotion detection with random changes
     emotionTimerRef.current = setInterval(() => {
       const emotions = ['neutral', 'positive', 'veryhappy'] as const;
       const randomEmotion = emotions[Math.floor(Math.random() * emotions.length)];
@@ -157,10 +165,8 @@ const Record = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // This would normally be an API call to save the video and metadata
     toast.success("Your testimonial has been successfully submitted!");
     
-    // Navigate to dashboard or testimonials page
     setTimeout(() => {
       navigate("/dashboard");
     }, 1500);
@@ -260,9 +266,9 @@ const Record = () => {
               playsInline
               muted 
               className="w-full h-full object-cover"
+              style={{ transform: 'scaleX(-1)' }}
             />
             
-            {/* Emotion overlay indicators */}
             {isRecording && (
               <div className="absolute top-4 right-4 flex items-center gap-2 bg-black/50 text-white px-3 py-1 rounded-full">
                 {emotionOverlay === 'neutral' && <span className="flex items-center">Neutral <Smile className="ml-1 h-4 w-4" /></span>}
