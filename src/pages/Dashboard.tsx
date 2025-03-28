@@ -1,122 +1,148 @@
-
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Input } from "@/components/ui/input"; 
-import {
-  BarChart,
-  Heart,
-  MessageSquare,
-  ThumbsUp,
-  Video,
-  Eye,
-  Calendar,
-  BarChart2,
-  Share2,
-  ChevronUp,
-  ChevronDown,
-  Star,
-  Search,
-} from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import { ArrowUpRight, Search, Download, Filter } from "lucide-react";
 
-// Mock data
-const mockTestimonials = [
+interface Testimonial {
+  id: string;
+  author: string;
+  text: string;
+  date: string;
+  rating: number;
+}
+
+const mockTestimonials: Testimonial[] = [
   {
-    id: 1,
-    name: "Sarah Johnson",
-    title: "Marketing Director",
-    company: "TechSolutions Inc.",
-    description: "Sharing my experience using the platform for our product launch campaign.",
-    date: "2023-08-15",
-    thumbnail: "https://i.pravatar.cc/300?img=1",
-    views: 427,
-    likes: 56,
-    comments: 12,
-    status: "published",
+    id: "1",
+    author: "Alice Johnson",
+    text: "Great service! I highly recommend them.",
+    date: "2023-01-15",
+    rating: 5,
   },
   {
-    id: 2,
-    name: "Michael Chen",
-    title: "Product Manager",
-    company: "Innovate Labs",
-    description: "How we improved our customer onboarding process with this solution.",
-    date: "2023-09-02",
-    thumbnail: "https://i.pravatar.cc/300?img=2",
-    views: 284,
-    likes: 42,
-    comments: 8,
-    status: "published",
+    id: "2",
+    author: "Bob Smith",
+    text: "The product was okay, but the support was excellent.",
+    date: "2023-02-20",
+    rating: 3,
   },
   {
-    id: 3,
-    name: "Emma Rodriguez",
-    title: "Customer Success Lead",
-    company: "Growth Ventures",
-    description: "The impact of implementing this solution on our customer satisfaction rates.",
-    date: "2023-09-17",
-    thumbnail: "https://i.pravatar.cc/300?img=3",
-    views: 156,
-    likes: 24,
-    comments: 5,
-    status: "published",
+    id: "3",
+    author: "Charlie Brown",
+    text: "Exceeded my expectations! Will definitely use again.",
+    date: "2023-03-10",
+    rating: 4,
   },
   {
-    id: 4,
-    name: "David Park",
-    title: "CEO",
-    company: "Startup Foundry",
-    description: "Draft testimonial still waiting for approval from our legal team.",
-    date: "2023-09-22",
-    thumbnail: "https://i.pravatar.cc/300?img=4",
-    views: 0,
-    likes: 0,
-    comments: 0,
-    status: "draft",
+    id: "4",
+    author: "Diana Prince",
+    text: "Could be better, but overall a positive experience.",
+    date: "2023-04-05",
+    rating: 3,
+  },
+  {
+    id: "5",
+    author: "Ethan Hunt",
+    text: "Amazing! The best service I've ever received.",
+    date: "2023-05-01",
+    rating: 5,
+  },
+  {
+    id: "6",
+    author: "Alice Johnson",
+    text: "Great service! I highly recommend them.",
+    date: "2023-01-15",
+    rating: 5,
+  },
+  {
+    id: "7",
+    author: "Bob Smith",
+    text: "The product was okay, but the support was excellent.",
+    date: "2023-02-20",
+    rating: 3,
+  },
+  {
+    id: "8",
+    author: "Charlie Brown",
+    text: "Exceeded my expectations! Will definitely use again.",
+    date: "2023-03-10",
+    rating: 4,
+  },
+  {
+    id: "9",
+    author: "Diana Prince",
+    text: "Could be better, but overall a positive experience.",
+    date: "2023-04-05",
+    rating: 3,
+  },
+  {
+    id: "10",
+    author: "Ethan Hunt",
+    text: "Amazing! The best service I've ever received.",
+    date: "2023-05-01",
+    rating: 5,
   },
 ];
 
-// Dashboard analytics mock data
-const analytics = {
-  totalTestimonials: 17,
-  totalViews: 5893,
-  averageRating: 4.8,
-  totalComments: 127,
-  recentSentiment: 92, // percentage positive
-  monthlyViews: [340, 389, 425, 521, 612, 594, 687, 729, 842, 901, 824, 729],
-  emotionData: [
-    { name: "Joy", value: 42 },
-    { name: "Trust", value: 28 },
-    { name: "Excitement", value: 14 },
-    { name: "Satisfaction", value: 10 },
-    { name: "Neutral", value: 6 },
-  ],
-};
+interface CampaignData {
+  name: string;
+  views: number;
+  clicks: number;
+  conversions: number;
+}
+
+const mockCampaignData: CampaignData[] = [
+  { name: "Campaign A", views: 4000, clicks: 2400, conversions: 800 },
+  { name: "Campaign B", views: 3000, clicks: 1398, conversions: 600 },
+  { name: "Campaign C", views: 2000, clicks: 9800, conversions: 400 },
+  { name: "Campaign D", views: 2780, clicks: 3908, conversions: 700 },
+  { name: "Campaign E", views: 1890, clicks: 4800, conversions: 300 },
+  { name: "Campaign F", views: 2390, clicks: 3800, conversions: 550 },
+  { name: "Campaign G", views: 3490, clicks: 4300, conversions: 900 },
+];
+
+interface CategoryData {
+  name: string;
+  value: number;
+  color: string;
+}
+
+const mockCategoryData: CategoryData[] = [
+  { name: "Positive", value: 35, color: "#60A5FA" },
+  { name: "Neutral", value: 25, color: "#A3A3A3" },
+  { name: "Negative", value: 15, color: "#F472B6" },
+  { name: "Uncategorized", value: 25, color: "#E5E7EB" },
+];
 
 const Dashboard = () => {
   const { toast } = useToast();
-  const [currentTab, setCurrentTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState("overview");
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
-  const shareTestimonial = (id: number) => {
-    toast({
-      title: "Share link copied!",
-      description: "The testimonial link has been copied to your clipboard.",
-    });
-  };
+  const { data, isLoading, isError } = useQuery("testimonials", () =>
+    Promise.resolve(mockTestimonials)
+  );
 
-  const formatNumber = (num: number) => {
-    return num >= 1000 ? `${(num / 1000).toFixed(1)}K` : num;
-  };
+  if (isLoading) {
+    return <div>Loading testimonials...</div>;
+  }
 
-  const formatDate = (dateStr: string) => {
-    const date = new Date(dateStr);
+  if (isError) {
+    return <div>Error loading testimonials.</div>;
+  }
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
     return new Intl.DateTimeFormat("en-US", {
+      year: "numeric",
       month: "short",
       day: "numeric",
-      year: "numeric",
     }).format(date);
   };
 
@@ -125,532 +151,218 @@ const Dashboard = () => {
     setSearchTerm(e.target.value);
   };
 
+  const filteredTestimonials = data
+    ? data.filter((testimonial) =>
+        testimonial.author.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        testimonial.text.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : [];
+
+  const totalItems = filteredTestimonials.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  const currentItems = filteredTestimonials.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handleDownload = () => {
+    toast({
+      title: "Download Started",
+      description: "Your testimonial data is being prepared for download.",
+    });
+  };
+
+  const COLORS = mockCategoryData.map(item => item.color);
+
   return (
-    <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-      <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
-          <p className="mt-1 text-gray-600 dark:text-gray-400">
-            Manage and analyze your testimonials
-          </p>
-        </div>
-        <div className="mt-4 md:mt-0">
-          <Button asChild className="bg-primary-500 hover:bg-primary-600">
-            <Link to="/record">
-              <Video className="mr-2 h-4 w-4" />
-              Record New Testimonial
-            </Link>
-          </Button>
-        </div>
+    <div className="container py-8 mx-auto">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold tracking-tight glow-text">Performance Dashboard</h1>
+        <p className="text-muted-foreground">Track and monitor your testimonial campaign metrics</p>
       </div>
 
-      <div className="mb-6">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 dark:text-gray-400" />
-          <Input
-            type="text"
-            placeholder="Search testimonials..."
-            value={searchTerm}
-            onChange={handleSearch}
-            className="pl-10"
-          />
-        </div>
-      </div>
-
-      <Tabs defaultValue="overview" onChange={(value) => setCurrentTab(value)}>
-        <TabsList className="mb-6">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+        <TabsList>
           <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="testimonials">My Testimonials</TabsTrigger>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
+          <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
+          <TabsTrigger value="categories">Categories</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <Card className="p-6">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-sm font-medium text-gray-500">
-                    Total Testimonials
-                  </p>
-                  <h3 className="text-3xl font-bold mt-2">
-                    {analytics.totalTestimonials}
-                  </h3>
-                </div>
-                <div className="bg-primary-50 p-3 rounded-full">
-                  <Video className="h-6 w-6 text-primary-500" />
-                </div>
-              </div>
-              <div className="mt-4 flex items-center text-sm">
-                <div className="flex items-center text-green-500">
-                  <ChevronUp className="h-4 w-4 mr-1" />
-                  <span>12%</span>
-                </div>
-                <span className="text-gray-500 ml-2">from last month</span>
+        <TabsContent value="overview" className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <Card className="card-gradient hover-glow">
+              <div className="p-4">
+                <h2 className="text-lg font-semibold">Total Testimonials</h2>
+                <p className="text-3xl font-bold mt-2">{data ? data.length : 0}</p>
               </div>
             </Card>
-
-            <Card className="p-6">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-sm font-medium text-gray-500">
-                    Total Views
-                  </p>
-                  <h3 className="text-3xl font-bold mt-2">
-                    {formatNumber(analytics.totalViews)}
-                  </h3>
-                </div>
-                <div className="bg-blue-50 p-3 rounded-full">
-                  <Eye className="h-6 w-6 text-blue-500" />
-                </div>
-              </div>
-              <div className="mt-4 flex items-center text-sm">
-                <div className="flex items-center text-green-500">
-                  <ChevronUp className="h-4 w-4 mr-1" />
-                  <span>18%</span>
-                </div>
-                <span className="text-gray-500 ml-2">from last month</span>
+            <Card className="card-gradient hover-glow">
+              <div className="p-4">
+                <h2 className="text-lg font-semibold">Average Rating</h2>
+                <p className="text-3xl font-bold mt-2">
+                  {data
+                    ? data.reduce((acc, curr) => acc + curr.rating, 0) /
+                      data.length
+                    : 0}
+                </p>
               </div>
             </Card>
-
-            <Card className="p-6">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-sm font-medium text-gray-500">
-                    Average Rating
-                  </p>
-                  <h3 className="text-3xl font-bold mt-2">
-                    {analytics.averageRating}
-                  </h3>
-                </div>
-                <div className="bg-yellow-50 p-3 rounded-full">
-                  <Star className="h-6 w-6 text-yellow-500" />
-                </div>
-              </div>
-              <div className="mt-4 flex items-center text-sm">
-                <div className="flex items-center text-green-500">
-                  <ChevronUp className="h-4 w-4 mr-1" />
-                  <span>0.2</span>
-                </div>
-                <span className="text-gray-500 ml-2">from last month</span>
-              </div>
-            </Card>
-
-            <Card className="p-6">
-              <div className="flex justify-between items-start">
-                <div>
-                  <p className="text-sm font-medium text-gray-500">
-                    Sentiment Score
-                  </p>
-                  <h3 className="text-3xl font-bold mt-2">
-                    {analytics.recentSentiment}%
-                  </h3>
-                </div>
-                <div className="bg-green-50 p-3 rounded-full">
-                  <ThumbsUp className="h-6 w-6 text-green-500" />
-                </div>
-              </div>
-              <div className="mt-4 flex items-center text-sm">
-                <div className="flex items-center text-red-500">
-                  <ChevronDown className="h-4 w-4 mr-1" />
-                  <span>3%</span>
-                </div>
-                <span className="text-gray-500 ml-2">from last month</span>
-              </div>
-            </Card>
-          </div>
-
-          <div>
-            <h2 className="text-xl font-semibold mb-4">Recent Testimonials</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {mockTestimonials
-                .filter((t) => t.status === "published")
-                .slice(0, 3)
-                .map((testimonial) => (
-                  <Card
-                    key={testimonial.id}
-                    className="overflow-hidden hover:shadow-md transition-shadow"
-                  >
-                    <div className="aspect-video relative bg-gray-100">
-                      <img
-                        src={testimonial.thumbnail}
-                        alt={testimonial.name}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
-                        <Link
-                          to={`/testimonial/${testimonial.id}`}
-                          className="bg-white rounded-full p-3"
-                        >
-                          <Eye className="h-6 w-6 text-primary-500" />
-                        </Link>
-                      </div>
-                    </div>
-                    <div className="p-4">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="font-semibold">{testimonial.name}</h3>
-                          <p className="text-sm text-gray-600">
-                            {testimonial.title}, {testimonial.company}
-                          </p>
-                        </div>
-                        <span className="text-xs text-gray-500">
-                          {formatDate(testimonial.date)}
-                        </span>
-                      </div>
-                      <p className="mt-2 text-sm text-gray-700 line-clamp-2">
-                        {testimonial.description}
-                      </p>
-                      <div className="mt-4 flex items-center text-sm text-gray-500 space-x-4">
-                        <div className="flex items-center">
-                          <Eye className="h-4 w-4 mr-1" />
-                          <span>{testimonial.views}</span>
-                        </div>
-                        <div className="flex items-center">
-                          <ThumbsUp className="h-4 w-4 mr-1" />
-                          <span>{testimonial.likes}</span>
-                        </div>
-                        <div className="flex items-center">
-                          <MessageSquare className="h-4 w-4 mr-1" />
-                          <span>{testimonial.comments}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </Card>
-                ))}
-            </div>
-            {mockTestimonials.length > 3 && (
-              <div className="mt-6 text-center">
-                <Button
-                  variant="link"
-                  onClick={() => setCurrentTab("testimonials")}
-                  className="text-primary-500 hover:text-primary-600"
-                >
-                  View all testimonials
-                </Button>
-              </div>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="font-semibold">Emotion Analysis</h3>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setCurrentTab("analytics")}
-                  className="text-primary-500 hover:text-primary-600 text-sm"
-                >
-                  View Details
-                </Button>
-              </div>
-              <div className="space-y-4">
-                {analytics.emotionData.map((emotion) => (
-                  <div key={emotion.name}>
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="text-sm font-medium text-gray-600">
-                        {emotion.name}
-                      </span>
-                      <span className="text-sm font-medium text-gray-900">
-                        {emotion.value}%
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className="bg-primary-500 h-2 rounded-full"
-                        style={{ width: `${emotion.value}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </Card>
-
-            <Card className="p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="font-semibold">Monthly Views</h3>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setCurrentTab("analytics")}
-                  className="text-primary-500 hover:text-primary-600 text-sm"
-                >
-                  View Details
-                </Button>
-              </div>
-              <div className="h-[200px] flex items-end">
-                {analytics.monthlyViews.map((views, index) => (
-                  <div
-                    key={index}
-                    className="flex-1 flex flex-col items-center"
-                  >
-                    <div
-                      className="w-full max-w-[20px] bg-primary-100 rounded-t relative group"
-                      style={{
-                        height: `${(views / Math.max(...analytics.monthlyViews)) * 160}px`,
-                      }}
-                    >
-                      <div className="absolute inset-0 bg-primary-500 opacity-70 rounded-t"></div>
-                      <div className="hidden group-hover:block absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded">
-                        {views}
-                      </div>
-                    </div>
-                    <span className="text-xs text-gray-500 mt-1">
-                      {["J", "F", "M", "A", "M", "J", "J", "A", "S", "O", "N", "D"][index]}
-                    </span>
-                  </div>
-                ))}
+            <Card className="card-gradient hover-glow">
+              <div className="p-4">
+                <h2 className="text-lg font-semibold">New Testimonials</h2>
+                <p className="text-3xl font-bold mt-2">12</p>
               </div>
             </Card>
           </div>
         </TabsContent>
 
-        <TabsContent value="testimonials" className="space-y-6">
-          <Card className="overflow-hidden">
-            <div className="p-6 border-b">
-              <h2 className="text-xl font-semibold">My Testimonials</h2>
+        <TabsContent value="testimonials" className="space-y-4">
+          <div className="flex flex-col sm:flex-row gap-2 mb-4 justify-between">
+            <div className="relative">
+              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+              <input
+                type="text"
+                placeholder="Search testimonials..."
+                className="pl-9 py-2 pr-4 border border-input rounded-md w-full sm:w-[300px] focus:outline-none focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800"
+                value={searchTerm}
+                onChange={handleSearch}
+              />
             </div>
-            <div className="divide-y">
-              {mockTestimonials.map((testimonial) => (
-                <div
-                  key={testimonial.id}
-                  className="p-6 hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex flex-col md:flex-row gap-4">
-                    <div className="md:w-1/4 aspect-video bg-gray-100 rounded-md overflow-hidden">
-                      <img
-                        src={testimonial.thumbnail}
-                        alt={testimonial.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="md:w-3/4">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="font-semibold">{testimonial.name}</h3>
-                          <p className="text-sm text-gray-600">
-                            {testimonial.title}, {testimonial.company}
-                          </p>
-                        </div>
-                        <div className="flex items-center">
-                          <span
-                            className={`text-xs px-2 py-1 rounded-full ${
-                              testimonial.status === "published"
-                                ? "bg-green-100 text-green-800"
-                                : "bg-yellow-100 text-yellow-800"
-                            }`}
-                          >
-                            {testimonial.status === "published"
-                              ? "Published"
-                              : "Draft"}
-                          </span>
-                        </div>
-                      </div>
-                      <p className="mt-2 text-sm text-gray-700">
-                        {testimonial.description}
-                      </p>
-                      <div className="mt-4 flex flex-wrap items-center justify-between">
-                        <div className="flex items-center text-sm text-gray-500 space-x-4">
-                          <div className="flex items-center">
-                            <Calendar className="h-4 w-4 mr-1" />
-                            <span>{formatDate(testimonial.date)}</span>
-                          </div>
-                          {testimonial.status === "published" && (
-                            <>
-                              <div className="flex items-center">
-                                <Eye className="h-4 w-4 mr-1" />
-                                <span>{testimonial.views}</span>
-                              </div>
-                              <div className="flex items-center">
-                                <ThumbsUp className="h-4 w-4 mr-1" />
-                                <span>{testimonial.likes}</span>
-                              </div>
-                              <div className="flex items-center">
-                                <MessageSquare className="h-4 w-4 mr-1" />
-                                <span>{testimonial.comments}</span>
-                              </div>
-                            </>
-                          )}
-                        </div>
-                        <div className="mt-4 md:mt-0 flex space-x-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => shareTestimonial(testimonial.id)}
-                          >
-                            <Share2 className="h-4 w-4 mr-2" />
-                            Share
-                          </Button>
-                          <Button size="sm" asChild>
-                            <Link to={`/testimonial/${testimonial.id}`}>
-                              View
-                            </Link>
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              ))}
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" onClick={handleDownload}>
+                <Download className="mr-2" size={16} />
+                Download
+              </Button>
+              <Button variant="secondary" size="sm">
+                <Filter className="mr-2" size={16} />
+                Filter
+              </Button>
+            </div>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-800">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Author
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Testimonial
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Date
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Rating
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200 dark:divide-gray-700">
+                {currentItems.map((testimonial) => (
+                  <tr key={testimonial.id}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                      {testimonial.author}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
+                      {testimonial.text}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                      {formatDate(testimonial.date)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                      {testimonial.rating}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="flex justify-between items-center mt-4">
+            <span className="text-sm text-gray-700 dark:text-gray-300">
+              Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
+              {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} results
+            </span>
+            <div className="space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage - 1)}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(currentPage + 1)}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="campaigns" className="space-y-4">
+          <Card className="card-gradient hover-glow">
+            <div className="p-4">
+              <h2 className="text-lg font-semibold">Campaign Performance</h2>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={mockCampaignData}>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-gray-200 dark:stroke-gray-700" />
+                  <XAxis dataKey="name" className="text-sm text-gray-500 dark:text-gray-400" />
+                  <YAxis className="text-sm text-gray-500 dark:text-gray-400" />
+                  <Tooltip />
+                  <Bar dataKey="views" fill="#8884d8" />
+                  <Bar dataKey="clicks" fill="#82ca9d" />
+                  <Bar dataKey="conversions" fill="#ffc658" />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </Card>
         </TabsContent>
 
-        <TabsContent value="analytics" className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="p-6">
-              <h3 className="font-semibold mb-4">Emotion Analysis</h3>
-              <div className="space-y-4">
-                {analytics.emotionData.map((emotion) => (
-                  <div key={emotion.name}>
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="text-sm font-medium text-gray-600">
-                        {emotion.name}
-                      </span>
-                      <span className="text-sm font-medium text-gray-900">
-                        {emotion.value}%
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2.5">
-                      <div
-                        className="bg-primary-500 h-2.5 rounded-full"
-                        style={{ width: `${emotion.value}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="mt-6">
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Summary</h4>
-                <p className="text-sm text-gray-600">
-                  Your testimonials evoke predominantly positive emotions, with Joy and Trust being the strongest reactions. This indicates your product or service creates a very positive impression on customers.
-                </p>
-              </div>
-            </Card>
-
-            <Card className="p-6">
-              <h3 className="font-semibold mb-4">Sentiment Trends</h3>
-              <div className="h-[250px] flex items-end mb-4">
-                {[85, 88, 92, 90, 91, 92].map((score, index) => (
-                  <div
-                    key={index}
-                    className="flex-1 flex flex-col items-center"
+        <TabsContent value="categories" className="space-y-4">
+          <Card className="card-gradient hover-glow">
+            <div className="p-4">
+              <h2 className="text-lg font-semibold">Testimonial Categories</h2>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={mockCategoryData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    fill="#8884d8"
+                    label
                   >
-                    <div
-                      className="w-full max-w-[40px] bg-primary-100 rounded-t relative group"
-                      style={{
-                        height: `${score * 2}px`,
-                      }}
-                    >
-                      <div 
-                        className="absolute inset-0 rounded-t"
-                        style={{
-                          background: `linear-gradient(to top, #4ade80 ${score - 60}%, #6E59A5 100%)`,
-                          opacity: 0.8
-                        }}
-                      ></div>
-                      <div className="hidden group-hover:block absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded">
-                        {score}%
-                      </div>
-                    </div>
-                    <span className="text-xs text-gray-500 mt-1">
-                      {["Apr", "May", "Jun", "Jul", "Aug", "Sep"][index]}
-                    </span>
-                  </div>
+                    {
+                      mockCategoryData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))
+                    }
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+              <ul className="mt-4">
+                {mockCategoryData.map((category) => (
+                  <li key={category.name} className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                    <span className="block w-2 h-2 rounded-full" style={{ backgroundColor: category.color }}></span>
+                    {category.name} ({category.value}%)
+                  </li>
                 ))}
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Analysis</h4>
-                <p className="text-sm text-gray-600">
-                  Sentiment has been consistently positive over the past 6 months, with a steady trend upward. June and September show the highest sentiment scores at 92%.
-                </p>
-              </div>
-            </Card>
-          </div>
-
-          <Card className="p-6">
-            <h3 className="font-semibold mb-6">Monthly Performance</h3>
-            <div className="h-[300px] flex items-end mb-6">
-              {analytics.monthlyViews.map((views, index) => (
-                <div
-                  key={index}
-                  className="flex-1 flex flex-col items-center"
-                >
-                  <div
-                    className="w-full max-w-[40px] bg-primary-100 rounded-t relative group"
-                    style={{
-                      height: `${(views / Math.max(...analytics.monthlyViews)) * 250}px`,
-                    }}
-                  >
-                    <div className="absolute inset-0 bg-primary-500 opacity-70 rounded-t"></div>
-                    <div className="hidden group-hover:block absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs py-1 px-2 rounded">
-                      {views} views
-                    </div>
-                  </div>
-                  <span className="text-xs text-gray-500 mt-1">
-                    {["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][index]}
-                  </span>
-                </div>
-              ))}
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-primary-50 rounded-lg p-4">
-                <div className="flex items-center mb-2">
-                  <BarChart2 className="h-5 w-5 text-primary-500 mr-2" />
-                  <h4 className="font-medium">Total Views</h4>
-                </div>
-                <p className="text-2xl font-bold">{formatNumber(analytics.totalViews)}</p>
-                <p className="text-sm text-gray-600 mt-1">Last 12 months</p>
-              </div>
-              <div className="bg-blue-50 rounded-lg p-4">
-                <div className="flex items-center mb-2">
-                  <Heart className="h-5 w-5 text-blue-500 mr-2" />
-                  <h4 className="font-medium">Engagement Rate</h4>
-                </div>
-                <p className="text-2xl font-bold">5.4%</p>
-                <p className="text-sm text-gray-600 mt-1">Likes & comments</p>
-              </div>
-              <div className="bg-green-50 rounded-lg p-4">
-                <div className="flex items-center mb-2">
-                  <ThumbsUp className="h-5 w-5 text-green-500 mr-2" />
-                  <h4 className="font-medium">Recommendation Rate</h4>
-                </div>
-                <p className="text-2xl font-bold">94%</p>
-                <p className="text-sm text-gray-600 mt-1">Would recommend</p>
-              </div>
-            </div>
-          </Card>
-
-          <Card className="p-6">
-            <h3 className="font-semibold mb-4">Key Insights</h3>
-            <div className="space-y-4">
-              <div className="p-4 border rounded-lg bg-yellow-50 border-yellow-200">
-                <h4 className="font-medium mb-2 flex items-center text-yellow-700">
-                  <Star className="h-5 w-5 mr-2 text-yellow-500" />
-                  Top Performing Testimonial
-                </h4>
-                <p className="text-sm text-gray-700">
-                  Sarah Johnson's testimonial has the highest engagement rate (13.1%) and has been viewed 427 times. Consider featuring this on your homepage.
-                </p>
-              </div>
-              <div className="p-4 border rounded-lg bg-blue-50 border-blue-200">
-                <h4 className="font-medium mb-2 flex items-center text-blue-700">
-                  <BarChart className="h-5 w-5 mr-2 text-blue-500" />
-                  Growth Trend
-                </h4>
-                <p className="text-sm text-gray-700">
-                  Your testimonial views have increased by 115% over the past 6 months. Continuing to add 2-3 new testimonials per month should maintain this growth.
-                </p>
-              </div>
-              <div className="p-4 border rounded-lg bg-green-50 border-green-200">
-                <h4 className="font-medium mb-2 flex items-center text-green-700">
-                  <MessageSquare className="h-5 w-5 mr-2 text-green-500" />
-                  Common Themes
-                </h4>
-                <p className="text-sm text-gray-700">
-                  AI analysis shows "ease of use" and "exceptional support" are mentioned most frequently in positive testimonials. Consider highlighting these aspects in marketing.
-                </p>
-              </div>
+              </ul>
             </div>
           </Card>
         </TabsContent>
