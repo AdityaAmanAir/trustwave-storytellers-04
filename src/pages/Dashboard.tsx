@@ -1,4 +1,3 @@
-
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -96,6 +95,7 @@ const analytics = {
 const Dashboard = () => {
   const { toast } = useToast();
   const [currentTab, setCurrentTab] = useState("overview");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const shareTestimonial = (id: number) => {
     // This would normally copy a share link to clipboard
@@ -116,6 +116,10 @@ const Dashboard = () => {
       day: "numeric",
       year: "numeric",
     }).format(date);
+  };
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
   };
 
   return (

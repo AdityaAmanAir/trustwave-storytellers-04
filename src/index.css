@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -97,5 +98,64 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+  
+  /* Add glowing text effects */
+  .glow-text {
+    @apply text-primary-500 dark:text-primary-300;
+    text-shadow: 0 0 5px rgba(110, 89, 165, 0.3), 0 0 10px rgba(110, 89, 165, 0.2);
+  }
+  
+  .dark .glow-text {
+    text-shadow: 0 0 5px rgba(180, 159, 235, 0.5), 0 0 15px rgba(180, 159, 235, 0.3);
+  }
+  
+  /* Card hover effects */
+  .hover-glow {
+    @apply transition-all duration-300;
+  }
+  
+  .hover-glow:hover {
+    @apply shadow-lg;
+    box-shadow: 0 5px 15px rgba(110, 89, 165, 0.2), 0 0 0 1px rgba(110, 89, 165, 0.1);
+  }
+  
+  .dark .hover-glow:hover {
+    box-shadow: 0 5px 20px rgba(110, 89, 165, 0.4), 0 0 0 1px rgba(110, 89, 165, 0.2);
+  }
+  
+  /* Button glow effects */
+  .btn-glow {
+    @apply relative overflow-hidden;
+  }
+  
+  .btn-glow::after {
+    content: '';
+    @apply absolute inset-0 rounded-md bg-gradient-to-r from-primary-200/30 to-primary-300/20 opacity-0 transition-opacity duration-300;
+  }
+  
+  .btn-glow:hover::after {
+    @apply opacity-100;
+  }
+  
+  .dark .btn-glow::after {
+    @apply bg-gradient-to-r from-primary-400/30 to-primary-500/20;
+  }
+}
+
+@layer utilities {
+  .animate-pulse-light {
+    animation: pulse-light 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  @keyframes pulse-light {
+    0%, 100% {
+      opacity: 0.7;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.4;
+      transform: scale(1.05);
+    }
   }
 }
