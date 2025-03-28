@@ -1,4 +1,3 @@
-
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -148,7 +147,6 @@ const Dashboard = () => {
     }).format(date);
   };
 
-  // Fix for the TypeScript error - properly type the event parameter
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
@@ -182,32 +180,32 @@ const Dashboard = () => {
   const COLORS = mockCategoryData.map(item => item.color);
 
   return (
-    <div className="container py-8 mx-auto">
+    <div className="container max-w-[1440px] py-8 mx-auto px-4 md:px-6 lg:px-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight glow-text">Performance Dashboard</h1>
         <p className="text-muted-foreground">Track and monitor your testimonial campaign metrics</p>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <TabsList className="w-full md:w-auto">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="testimonials">Testimonials</TabsTrigger>
           <TabsTrigger value="campaigns">Campaigns</TabsTrigger>
           <TabsTrigger value="categories">Categories</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="overview" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <TabsContent value="overview" className="space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <Card className="card-gradient hover-glow">
-              <div className="p-4">
+              <div className="p-6">
                 <h2 className="text-lg font-semibold">Total Testimonials</h2>
-                <p className="text-3xl font-bold mt-2">{data ? data.length : 0}</p>
+                <p className="text-4xl font-bold mt-2">{data ? data.length : 0}</p>
               </div>
             </Card>
             <Card className="card-gradient hover-glow">
-              <div className="p-4">
+              <div className="p-6">
                 <h2 className="text-lg font-semibold">Average Rating</h2>
-                <p className="text-3xl font-bold mt-2">
+                <p className="text-4xl font-bold mt-2">
                   {data
                     ? data.reduce((acc, curr) => acc + curr.rating, 0) /
                       data.length
@@ -216,33 +214,33 @@ const Dashboard = () => {
               </div>
             </Card>
             <Card className="card-gradient hover-glow">
-              <div className="p-4">
+              <div className="p-6">
                 <h2 className="text-lg font-semibold">New Testimonials</h2>
-                <p className="text-3xl font-bold mt-2">12</p>
+                <p className="text-4xl font-bold mt-2">12</p>
               </div>
             </Card>
           </div>
         </TabsContent>
 
-        <TabsContent value="testimonials" className="space-y-4">
-          <div className="flex flex-col sm:flex-row gap-2 mb-4 justify-between">
-            <div className="relative">
-              <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+        <TabsContent value="testimonials" className="space-y-6">
+          <div className="flex flex-col sm:flex-row gap-4 mb-6 justify-between">
+            <div className="relative w-full sm:w-[400px]">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
               <input
                 type="text"
                 placeholder="Search testimonials..."
-                className="pl-9 py-2 pr-4 border border-input rounded-md w-full sm:w-[300px] focus:outline-none focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800"
+                className="pl-10 py-3 pr-4 border border-input rounded-md w-full focus:outline-none focus:ring-2 focus:ring-primary-200 dark:focus:ring-primary-800"
                 value={searchTerm}
                 onChange={handleSearch}
               />
             </div>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={handleDownload}>
-                <Download className="mr-2" size={16} />
+            <div className="flex gap-3">
+              <Button variant="outline" size="lg" onClick={handleDownload}>
+                <Download className="mr-2" size={18} />
                 Download
               </Button>
-              <Button variant="secondary" size="sm">
-                <Filter className="mr-2" size={16} />
+              <Button variant="secondary" size="lg">
+                <Filter className="mr-2" size={18} />
                 Filter
               </Button>
             </div>
@@ -252,16 +250,16 @@ const Dashboard = () => {
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
               <thead className="bg-gray-50 dark:bg-gray-800">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-8 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Author
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-8 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Testimonial
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-8 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Date
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-8 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Rating
                   </th>
                 </tr>
@@ -269,16 +267,16 @@ const Dashboard = () => {
               <tbody className="bg-white divide-y divide-gray-200 dark:divide-gray-700">
                 {currentItems.map((testimonial) => (
                   <tr key={testimonial.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
+                    <td className="px-8 py-5 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
                       {testimonial.author}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-300">
+                    <td className="px-8 py-5 text-sm text-gray-500 dark:text-gray-300">
                       {testimonial.text}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                    <td className="px-8 py-5 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                       {formatDate(testimonial.date)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                    <td className="px-8 py-5 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                       {testimonial.rating}
                     </td>
                   </tr>
@@ -287,12 +285,12 @@ const Dashboard = () => {
             </table>
           </div>
 
-          <div className="flex justify-between items-center mt-4">
+          <div className="flex justify-between items-center mt-6">
             <span className="text-sm text-gray-700 dark:text-gray-300">
               Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
               {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} results
             </span>
-            <div className="space-x-2">
+            <div className="space-x-3">
               <Button
                 variant="outline"
                 size="sm"
@@ -313,11 +311,11 @@ const Dashboard = () => {
           </div>
         </TabsContent>
 
-        <TabsContent value="campaigns" className="space-y-4">
+        <TabsContent value="campaigns" className="space-y-6">
           <Card className="card-gradient hover-glow">
-            <div className="p-4">
-              <h2 className="text-lg font-semibold">Campaign Performance</h2>
-              <ResponsiveContainer width="100%" height={300}>
+            <div className="p-6">
+              <h2 className="text-xl font-semibold mb-4">Campaign Performance</h2>
+              <ResponsiveContainer width="100%" height={400}>
                 <BarChart data={mockCampaignData}>
                   <CartesianGrid strokeDasharray="3 3" className="stroke-gray-200 dark:stroke-gray-700" />
                   <XAxis dataKey="name" className="text-sm text-gray-500 dark:text-gray-400" />
@@ -332,39 +330,46 @@ const Dashboard = () => {
           </Card>
         </TabsContent>
 
-        <TabsContent value="categories" className="space-y-4">
+        <TabsContent value="categories" className="space-y-6">
           <Card className="card-gradient hover-glow">
-            <div className="p-4">
-              <h2 className="text-lg font-semibold">Testimonial Categories</h2>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={mockCategoryData}
-                    dataKey="value"
-                    nameKey="name"
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={80}
-                    fill="#8884d8"
-                    label
-                  >
-                    {
-                      mockCategoryData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))
-                    }
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-              <ul className="mt-4">
-                {mockCategoryData.map((category) => (
-                  <li key={category.name} className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-                    <span className="block w-2 h-2 rounded-full" style={{ backgroundColor: category.color }}></span>
-                    {category.name} ({category.value}%)
-                  </li>
-                ))}
-              </ul>
+            <div className="p-6">
+              <h2 className="text-xl font-semibold mb-4">Testimonial Categories</h2>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div>
+                  <ResponsiveContainer width="100%" height={400}>
+                    <PieChart>
+                      <Pie
+                        data={mockCategoryData}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={120}
+                        fill="#8884d8"
+                        label
+                      >
+                        {
+                          mockCategoryData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))
+                        }
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="flex items-center">
+                  <ul className="w-full space-y-3">
+                    {mockCategoryData.map((category) => (
+                      <li key={category.name} className="flex items-center gap-3 text-sm">
+                        <span className="block w-4 h-4 rounded-full" style={{ backgroundColor: category.color }}></span>
+                        <span className="text-gray-700 dark:text-gray-200 font-medium">{category.name}</span>
+                        <span className="ml-auto text-lg font-semibold">{category.value}%</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
             </div>
           </Card>
         </TabsContent>
