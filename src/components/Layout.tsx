@@ -9,7 +9,7 @@ const Layout = () => {
   return (
     <ThemeProvider defaultTheme="system">
       <div className="flex flex-col min-h-screen bg-gradient-to-br from-white via-primary-50/30 to-primary-100/20 dark:from-gray-900 dark:via-gray-800 dark:to-primary-900/20 transition-colors duration-500">
-        <div className="fixed top-4 right-4 z-50">
+        <div className="fixed top-4 right-4 z-50 md:top-6 md:right-6">
           <ThemeToggle />
         </div>
         <Navbar />
