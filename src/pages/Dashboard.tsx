@@ -2,6 +2,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input"; 
 import {
   BarChart,
   Heart,
@@ -15,6 +16,7 @@ import {
   ChevronUp,
   ChevronDown,
   Star,
+  Search,
 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -98,7 +100,6 @@ const Dashboard = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const shareTestimonial = (id: number) => {
-    // This would normally copy a share link to clipboard
     toast({
       title: "Share link copied!",
       description: "The testimonial link has been copied to your clipboard.",
@@ -126,8 +127,8 @@ const Dashboard = () => {
     <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="mt-1 text-gray-600">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
+          <p className="mt-1 text-gray-600 dark:text-gray-400">
             Manage and analyze your testimonials
           </p>
         </div>
@@ -141,6 +142,19 @@ const Dashboard = () => {
         </div>
       </div>
 
+      <div className="mb-6">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500 dark:text-gray-400" />
+          <Input
+            type="text"
+            placeholder="Search testimonials..."
+            value={searchTerm}
+            onChange={handleSearch}
+            className="pl-10"
+          />
+        </div>
+      </div>
+
       <Tabs defaultValue="overview" onChange={(value) => setCurrentTab(value)}>
         <TabsList className="mb-6">
           <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -149,7 +163,6 @@ const Dashboard = () => {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
-          {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card className="p-6">
               <div className="flex justify-between items-start">
@@ -244,7 +257,6 @@ const Dashboard = () => {
             </Card>
           </div>
 
-          {/* Recent Testimonials */}
           <div>
             <h2 className="text-xl font-semibold mb-4">Recent Testimonials</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -317,7 +329,6 @@ const Dashboard = () => {
             )}
           </div>
 
-          {/* Simple Analytics Preview */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card className="p-6">
               <div className="flex justify-between items-center mb-4">
