@@ -1,3 +1,4 @@
+
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -125,9 +126,10 @@ const Dashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  const { data, isLoading, isError } = useQuery("testimonials", () =>
-    Promise.resolve(mockTestimonials)
-  );
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["testimonials"],
+    queryFn: () => Promise.resolve(mockTestimonials)
+  });
 
   if (isLoading) {
     return <div>Loading testimonials...</div>;
