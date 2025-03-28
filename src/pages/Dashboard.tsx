@@ -1,3 +1,4 @@
+
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -119,6 +120,7 @@ const Dashboard = () => {
     }).format(date);
   };
 
+  // Fix for the TypeScript error - properly type the event parameter
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
