@@ -170,8 +170,8 @@ const Testimonials = () => {
 
       {/* Search and filters */}
       <div className="mb-8 grid grid-cols-1 md:grid-cols-12 gap-4">
-        {/* Updated the search field to span more columns */}
-        <div className="relative md:col-span-5">
+        {/* Increased the search field to span more columns */}
+        <div className="relative md:col-span-7">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <Input
             placeholder="Search testimonials by name, company, or content..."
@@ -181,7 +181,7 @@ const Testimonials = () => {
           />
         </div>
 
-        <div className="flex space-x-2 md:col-span-4 overflow-x-auto">
+        <div className="flex space-x-2 md:col-span-3 overflow-x-auto">
           <Button
             variant="outline"
             className={selectedCategory === "All" ? "bg-primary-50 text-primary-500 border-primary-200" : ""}
@@ -201,7 +201,7 @@ const Testimonials = () => {
           ))}
         </div>
 
-        <div className="flex justify-end md:col-span-3">
+        <div className="flex justify-end md:col-span-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="ml-auto">
